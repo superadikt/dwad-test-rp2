@@ -4,7 +4,7 @@
 
 ## Overview
 
-DwadTestRp is an ASP.NET Core MVC web application built on .NET 9, featuring both server-rendered views and a REST API documented with Swagger (Swashbuckle). This project is intended for demo and knowledge sharing purposes only.
+DwadTestRp is an ASP.NET Core MVC web application built on .NET 9, featuring both server-rendered views and a REST API documented with Swagger (Swashbuckle). This project uses Entity Framework Core with SQL Server for data persistence.
 
 ## Tech Stack
 
@@ -12,6 +12,8 @@ DwadTestRp is an ASP.NET Core MVC web application built on .NET 9, featuring bot
 |-------------------|-----------------------------|----------|
 | Framework         | ASP.NET Core MVC            | .NET 9.0 |
 | Language          | C#                          | 13       |
+| Database          | SQL Server (LocalDB)        | -        |
+| ORM               | Entity Framework Core       | 9.0.0    |
 | API Documentation | Swashbuckle.AspNetCore      | 10.1.7   |
 | Frontend          | Razor Views + Bootstrap     | 5.x      |
 | Client Scripting  | jQuery, jQuery Validation    | -        |
@@ -31,6 +33,15 @@ DwadTestRp/
 |
 |-- Models/
 |   |-- ErrorViewModel.cs               # Error page view model
+|   |-- User.cs                         # User entity model
+|
+|-- Data/
+|   |-- ApplicationDbContext.cs         # EF Core database context
+|
+|-- Migrations/                         # EF Core migration files
+|   |-- 20260406082452_InitialCreateUsersTable.cs
+|   |-- 20260406082452_InitialCreateUsersTable.Designer.cs
+|   |-- ApplicationDbContextModelSnapshot.cs
 |
 |-- Views/
 |   |-- _ViewImports.cshtml             # Global Razor imports & tag helpers
@@ -70,6 +81,7 @@ Configured in `Program.cs`, the middleware pipeline executes in this order:
 
 ```
 Request
+  |-> DbContext (ApplicationDbContext registered)
   |-> [Development] Swagger / SwaggerUI
   |-> [Production]  ExceptionHandler (/Home/Error)
   |-> Routing
@@ -84,9 +96,28 @@ Response
 | Module | Documentation | Description |
 |--------|---------------|-------------|
 | Program.cs | [program.md](modules/program.md) | Entry point, service registration, middleware pipeline |
+| ApplicationDbContext | [application-db-context.md](modules/application-db-context.md) | EF Core database context |
+| User | [user-model.md](modules/user-model.md) | User entity model |
 | HomeController | [home-controller.md](modules/home-controller.md) | MVC controller serving Razor views |
 | SampleApiController | [sample-api-controller.md](modules/sample-api-controller.md) | REST API with CRUD operations |
 | ErrorViewModel | [error-view-model.md](modules/error-view-model.md) | View model for error page rendering |
+
+## Database Schema
+
+### Users Table
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| Id | int | Primary Key, Identity |
+| FirstName | nvarchar(100) | NOT NULL |
+| LastName | nvarchar(100) | NOT NULL |
+| Email | nvarchar(255) | NOT NULL, Unique Index |
+| CreatedAt | datetime2 | NOT NULL |
+| UpdatedAt | datetime2 | NULL |
+
+**Indexes:**
+- `PK_Users` - Primary key on Id
+- `IX_Users_Email` - Unique index on Email
 
 ## API Endpoints
 
@@ -116,6 +147,8 @@ public record SampleRequest(string Name);
 
 ### App Settings (`appsettings.json`)
 
+- **ConnectionStrings**:
+  - DefaultConnection: `Server=(localdb)\mssqllocaldb;Database=DwadTestRpDb;Trusted_Connection=True;MultipleActiveResultSets=true`
 - **Logging**: Default = `Information`, ASP.NET Core = `Warning`
 - **AllowedHosts**: `*` (all hosts)
 
@@ -124,4 +157,6 @@ public record SampleRequest(string Name);
 1. **Swagger in Development only** - SwaggerUI is conditionally enabled via `app.Environment.IsDevelopment()` to avoid exposing API docs in production.
 2. **Separate API namespace** - API controllers live under `Controllers/Api/` and inherit from `ControllerBase`, keeping them distinct from MVC controllers that inherit from `Controller`.
 3. **Record types for request models** - `SampleRequest` uses C# record syntax for concise, immutable DTOs.
-4. **No HTTPS in template** - Project was scaffolded with `--no-https` for simpler local demo setup.
+4. **Entity Framework Core** - Uses code-first approach with migrations for database schema management.
+5. **Primary constructors** - ApplicationDbContext uses C# 13 primary constructor syntax.
+6. **No HTTPS in template** - Project was scaffolded with `--no-https` for simpler local demo setup.
