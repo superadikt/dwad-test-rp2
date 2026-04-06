@@ -1,15 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using DwadTestRp.Data;
 using DwadTestRp.Models;
 
 namespace DwadTestRp.Controllers;
 
-public class UsersController(ApplicationDbContext context) : Controller
+public class UsersController(IUserRepository userRepository) : Controller
 {
     public async Task<IActionResult> Index()
     {
-        var users = await context.Users.OrderByDescending(u => u.CreatedAt).ToListAsync();
+        var users = await userRepository.GetAllAsync();
         return View(users);
     }
 
@@ -25,9 +24,7 @@ public class UsersController(ApplicationDbContext context) : Controller
         if (!ModelState.IsValid)
             return View(user);
 
-        user.CreatedAt = DateTime.UtcNow;
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+        await userRepository.AddAsync(user);
         return RedirectToAction(nameof(Index));
     }
 
@@ -36,7 +33,7 @@ public class UsersController(ApplicationDbContext context) : Controller
         if (id is null)
             return NotFound();
 
-        var user = await context.Users.FindAsync(id);
+        var user = await userRepository.GetByIdAsync(id.Value);
         if (user is null)
             return NotFound();
 
@@ -53,9 +50,7 @@ public class UsersController(ApplicationDbContext context) : Controller
         if (!ModelState.IsValid)
             return View(user);
 
-        user.UpdatedAt = DateTime.UtcNow;
-        context.Users.Update(user);
-        await context.SaveChangesAsync();
+        await userRepository.UpdateAsync(user);
         return RedirectToAction(nameof(Index));
     }
 
@@ -64,7 +59,7 @@ public class UsersController(ApplicationDbContext context) : Controller
         if (id is null)
             return NotFound();
 
-        var user = await context.Users.FindAsync(id);
+        var user = await userRepository.GetByIdAsync(id.Value);
         if (user is null)
             return NotFound();
 
@@ -76,7 +71,7 @@ public class UsersController(ApplicationDbContext context) : Controller
         if (id is null)
             return NotFound();
 
-        var user = await context.Users.FindAsync(id);
+        var user = await userRepository.GetByIdAsync(id.Value);
         if (user is null)
             return NotFound();
 
@@ -87,13 +82,7 @@ public class UsersController(ApplicationDbContext context) : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var user = await context.Users.FindAsync(id);
-        if (user is not null)
-        {
-            context.Users.Remove(user);
-            await context.SaveChangesAsync();
-        }
-
+        await userRepository.DeleteAsync(id);
         return RedirectToAction(nameof(Index));
     }
 }
