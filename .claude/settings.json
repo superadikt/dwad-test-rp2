@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "A file was just written or edited: $ARGUMENTS\n\nCheck if the changed file is a source code file (.cs, .csproj, .cshtml, or Program.cs). Ignore changes to docs/, README.md, .json config files, .css, .js, and .gitignore.\n\nIf it IS a source code file, do the following:\n1. Read the changed file to understand what changed.\n2. Check if a corresponding module doc exists in docs/modules/. If the file is new and no doc exists, create one following the same format as existing module docs.\n3. If a doc exists, update it to reflect the current state of the source file.\n4. Update docs/ARCHITECTURE.md to reflect any structural changes (new files in the project structure tree, new endpoints in the API table, new entries in the Module Index, etc.).\n\nKeep documentation concise and factual. Do not add speculative content.",
+            "timeout": 120,
+            "statusMessage": "Updating project documentation..."
+          }
+        ]
+      }
+    ]
+  }
+}
