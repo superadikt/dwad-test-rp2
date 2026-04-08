@@ -8,6 +8,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<User> Users { get; set; }
     public DbSet<UserCreationRequest> UserCreationRequests { get; set; }
     public DbSet<ApprovalAudit> ApprovalAudits { get; set; }
+    public DbSet<TransactionLog> TransactionLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -41,6 +42,18 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.Action).IsRequired().HasMaxLength(50);
             entity.Property(e => e.PerformedBy).HasMaxLength(200);
             entity.Property(e => e.PerformedAt).IsRequired();
+        });
+
+        modelBuilder.Entity<TransactionLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Timestamp).IsRequired();
+            entity.Property(e => e.Module).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Action).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Entity).HasMaxLength(200);
+            entity.Property(e => e.EntityId).HasMaxLength(200);
+            entity.Property(e => e.PerformedBy).HasMaxLength(200);
+            entity.Property(e => e.Details).HasMaxLength(2000);
         });
     }
 }

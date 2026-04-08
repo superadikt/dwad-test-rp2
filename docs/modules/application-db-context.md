@@ -25,6 +25,9 @@ Entity Framework Core database context for the application.
 | Property | Type | Description |
 |----------|------|-------------|
 | Users | DbSet<User> | Collection of User entities |
+| UserCreationRequests | DbSet<UserCreationRequest> | Collection of user creation request entities |
+| ApprovalAudits | DbSet<ApprovalAudit> | Audit entries for approvals/rejections |
+| TransactionLogs | DbSet<TransactionLog> | Global transaction log entries |
 
 ## OnModelCreating Configuration
 

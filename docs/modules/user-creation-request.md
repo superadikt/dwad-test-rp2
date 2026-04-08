@@ -35,4 +35,9 @@ Provides a persistent model for requesting new user accounts. Includes status, a
 - `Data/UserCreationRequestRepository.cs` - Persistence and approval/rejection implementation.
 - `Services/IEmailSender.cs` - Sends email notifications upon approval/rejection.
 - `Views/UserCreationRequest/` - Razor views for creating requests and listing pending requests with modal preview.
+ - `Data/TransactionLogRepository.cs` - Records transaction logs for actions like approve/reject.
+
+## Transaction Logging
+
+All approve/reject actions create a `TransactionLog` entry with Module: `User Creation Approval` (Module name is exactly `User Creation Approval`), action and details (FullName, Email, Role, RequestId) after successful database commit. The `Action` field will be either `Approved User Creation Request` or `Rejected User Creation Request`.
 
