@@ -98,6 +98,7 @@ Response
 | Program.cs | [program.md](modules/program.md) | Entry point, service registration, middleware pipeline |
 | ApplicationDbContext | [application-db-context.md](modules/application-db-context.md) | EF Core database context |
 | User | [user-model.md](modules/user-model.md) | User entity model |
+| UserCreationRequest | [user-creation-request.md](modules/user-creation-request.md) | Workflow for approving new user creation requests |
 | HomeController | [home-controller.md](modules/home-controller.md) | MVC controller serving Razor views |
 | SampleApiController | [sample-api-controller.md](modules/sample-api-controller.md) | REST API with CRUD operations |
 | ErrorViewModel | [error-view-model.md](modules/error-view-model.md) | View model for error page rendering |
