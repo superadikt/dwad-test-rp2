@@ -1,0 +1,115 @@
+@model List<DwadTestRp.Models.UserCreationRequest>
+
+@{
+    Layout = "_Layout";
+}
+
+<h2>Pending User Creation Requests</h2>
+<table id="requestsTable" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Office</th>
+            <th>Requested By</th>
+            <th>Date Requested</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr data-id="@r.RequestId">
+                <td>@r.FullName</td>
+                <td>@r.Email</td>
+                <td>@r.Role</td>
+                <td>@r.OfficeId</td>
+                <td>@r.RequestedBy</td>
+                <td>@r.DateRequested.ToLocalTime()</td>
+                <td>
+                    <button class="btn btn-sm btn-primary view-details" data-id="@r.RequestId">View Details</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal placeholder -->
+<div id="modalPlaceholder"></div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(function () {
+            $('#requestsTable').on('click', '.view-details', function () {
+                var id = $(this).data('id');
+                $.get('/UserCreationRequest/Details', { id: id }, function (html) {
+                    $('#modalPlaceholder').html(html);
+                    $('#detailsModal').modal('show');
+                });
+            });
+
+            // Handle approve/reject from modal using delegated events
+            $(document).on('click', '#approveBtn', function () {
+                var id = $(this).data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This will create a new user account.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, approve'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/UserCreationRequest/ApproveRequest',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(id),
+                            success: function (res) {
+                                if (res.success) {
+                                    $('#detailsModal').modal('hide');
+                                    Swal.fire('Approved', '', 'success');
+                                    // refresh table
+                                    location.reload();
+                                } else {
+                                    Swal.fire('Error', res.error || 'Unable to approve', 'error');
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+            $(document).on('click', '#rejectBtn', function () {
+                var id = $(this).data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This request will be rejected.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, reject'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/UserCreationRequest/RejectRequest',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(id),
+                            success: function (res) {
+                                if (res.success) {
+                                    $('#detailsModal').modal('hide');
+                                    Swal.fire('Rejected', '', 'success');
+                                    // refresh table
+                                    location.reload();
+                                } else {
+                                    Swal.fire('Error', res.error || 'Unable to reject', 'error');
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

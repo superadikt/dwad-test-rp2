@@ -15,6 +15,11 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         return await context.Users.FindAsync(id);
     }
 
+    public async Task<User?> GetByEmailAsync(string email)
+    {
+        return await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+    }
+
     public async Task AddAsync(User user)
     {
         user.CreatedAt = DateTime.UtcNow;
