@@ -15,6 +15,7 @@ Configures the dependency injection container, registers middleware, and starts 
 | Service                    | Purpose                                      |
 |----------------------------|----------------------------------------------|
 | `AddDbContext<ApplicationDbContext>` | Registers EF Core DbContext with SQL Server |
+| `AddScoped<IUserRepository, UserRepository>` | Registers User repository (scoped lifetime) |
 | `AddControllersWithViews`  | Registers MVC controllers and Razor views    |
 | `AddEndpointsApiExplorer`  | Enables endpoint metadata for Swagger        |
 | `AddSwaggerGen`            | Configures OpenAPI/Swagger document generation |
@@ -50,5 +51,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 - `Microsoft.EntityFrameworkCore`
 - `DwadTestRp.Data.ApplicationDbContext`
+- `DwadTestRp.Data.IUserRepository`
+- `DwadTestRp.Data.UserRepository`
 - `Microsoft.OpenApi` (for `OpenApiInfo`)
 - `Swashbuckle.AspNetCore` (for Swagger middleware)
