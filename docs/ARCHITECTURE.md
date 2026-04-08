@@ -28,15 +28,21 @@ DwadTestRp/
 |
 |-- Controllers/
 |   |-- HomeController.cs               # MVC controller (Index, Privacy, Error)
+|   |-- TestController.cs               # MVC controller (Test page)
+|   |-- TransactionLogsController.cs    # MVC controller (Transaction Logs)
+|   |-- UsersController.cs              # MVC controller (Users CRUD)
 |   |-- Api/
 |       |-- SampleApiController.cs      # REST API controller (CRUD endpoints)
 |
 |-- Models/
 |   |-- ErrorViewModel.cs               # Error page view model
+|   |-- TransactionLog.cs               # Transaction log entity model
 |   |-- User.cs                         # User entity model
 |
 |-- Data/
 |   |-- ApplicationDbContext.cs         # EF Core database context
+|   |-- IUserRepository.cs             # Repository interface for User entity
+|   |-- UserRepository.cs              # Repository implementation for User entity
 |
 |-- Migrations/                         # EF Core migration files
 |   |-- 20260406082452_InitialCreateUsersTable.cs
@@ -49,6 +55,14 @@ DwadTestRp/
 |   |-- Home/
 |   |   |-- Index.cshtml                # Home page view
 |   |   |-- Privacy.cshtml              # Privacy page view
+|   |-- TransactionLogs/
+|   |   |-- Index.cshtml                # Transaction logs table view
+|   |-- Users/
+|   |   |-- Index.cshtml                # Users list view
+|   |   |-- Create.cshtml               # Create user form
+|   |   |-- Edit.cshtml                 # Edit user form
+|   |   |-- Details.cshtml              # User details view
+|   |   |-- Delete.cshtml               # Delete confirmation view
 |   |-- Shared/
 |       |-- _Layout.cshtml              # Master layout template
 |       |-- _Layout.cshtml.css          # Layout-scoped CSS
@@ -100,6 +114,11 @@ Response
 | User | [user-model.md](modules/user-model.md) | User entity model |
 | HomeController | [home-controller.md](modules/home-controller.md) | MVC controller serving Razor views |
 | SampleApiController | [sample-api-controller.md](modules/sample-api-controller.md) | REST API with CRUD operations |
+| TestController | [test-controller.md](modules/test-controller.md) | Minimal MVC controller for testing |
+| TransactionLog | [transaction-log-model.md](modules/transaction-log-model.md) | Transaction log entity model |
+| TransactionLogsController | [transaction-logs-controller.md](modules/transaction-logs-controller.md) | MVC controller for transaction logs |
+| UsersController | [users-controller.md](modules/users-controller.md) | MVC controller with full Users CRUD |
+| IUserRepository / UserRepository | [user-repository.md](modules/user-repository.md) | Repository pattern for User data access |
 | ErrorViewModel | [error-view-model.md](modules/error-view-model.md) | View model for error page rendering |
 
 ## Database Schema
@@ -160,3 +179,4 @@ public record SampleRequest(string Name);
 4. **Entity Framework Core** - Uses code-first approach with migrations for database schema management.
 5. **Primary constructors** - ApplicationDbContext uses C# 13 primary constructor syntax.
 6. **No HTTPS in template** - Project was scaffolded with `--no-https` for simpler local demo setup.
+7. **Repository pattern** - Data access is abstracted via `IUserRepository`/`UserRepository`, registered as scoped services for dependency injection in controllers.
